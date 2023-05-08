@@ -1,0 +1,14 @@
+{% sw_extends '@Storefront/storefront/layout/navigation/navigation.html.twig' %}
+{% block layout_main_navigation_menu_home %}
+    {{ parent() }}
+    {% block  layout_main_navigation_menu_item_after %}
+        <a class="nav-link main-navigation-link"
+           href="{{ path('frontend.fast-order.page') }}"
+           itemprop="url"
+           title="{{ 'Fast Order'|striptags }}">
+            <div class="main-navigation-link-text">
+                <span>Fast Order</span>
+            </div>
+        </a>
+    {% endblock %}
+{% endblock %}

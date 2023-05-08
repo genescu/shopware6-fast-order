@@ -1,0 +1,53 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+
+
+
+{% block base_content %}
+    <h1 class="cart-main-header">
+        Fast Order Shopping cart
+    </h1>
+    <form action="{{ path('frontend.fast-order.add-cart') }}" method="post">
+        {{ sw_csrf('frontend.fast-order.add-cart') }}
+
+        <div class="form-row font-weight-bold">
+            <div class="col col-6">
+                Article
+                <hr>
+            </div>
+            <div class="col col-3 ml-4">
+                Quantity
+                <hr>
+            </div>
+        </div>
+
+        {% for i in 1..10 %}
+            <div class="form-row mb-3">
+                <div class="col col-6">
+                    <input placeholder="Search article..."
+                           type="text" class="form-control" id="product"
+                           maxlength="64"
+                           name="products[{{ i }}][number]">
+
+                </div>
+
+                <div class="col col-3 ml-4">
+                    <input placeholder="Quantity" type="text" class="form-control" id="quantity"
+                           name="products[{{ i }}][quantity]">
+                </div>
+
+            </div>
+
+        {% endfor %}
+        <div class="form-row mb-3">
+            <div class="col col-9 text-right ml-4">
+                Total amount: <span class="font-weight-bold" id="total-amount">-</span>
+            </div>
+        </div>
+        <div class="form-row mb-3">
+            <input type="submit" class="btn-primary mt-3 p-2 pl-3 pr-3" value="Add to shopping cart">
+        </div>
+    </form>
+
+{% endblock %}
+

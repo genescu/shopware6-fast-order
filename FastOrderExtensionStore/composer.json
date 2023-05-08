@@ -1,0 +1,22 @@
+{
+  "name": "ge/fastorder",
+  "description": "Fast order cart",
+  "type": "shopware-platform-plugin",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "GE\\FastOrder\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">= 8.0",
+    "shopware/core": "6.4.*"
+  },
+  "extra": {
+    "shopware-plugin-class": "GE\\FastOrder\\FastOrderPlugin",
+    "label": {
+      "de-DE": "Adds a fast order cart",
+      "en-GB": "Adds a fast order cart"
+    }
+  }
+}
