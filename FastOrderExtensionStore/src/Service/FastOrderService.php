@@ -12,6 +12,7 @@ use Shopware\Core\Content\Product\ProductCollection;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\ContainsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -25,6 +26,16 @@ class FastOrderService
     {
         $this->lineItemFactoryRegistry = $lineItemFactoryRegistry;
         $this->cartService = $cartService;
+    }
+
+    public function searchAvailableProducts(EntityRepository $entityRepository, string $search, Context $context): ProductCollection
+    {
+        $criteria = (new Criteria())
+            ->addFilter(new EqualsFilter('active', true))
+            ->addFilter(new ContainsFilter('productNumber', $search))
+            ->setLimit(5);
+
+        return $entityRepository->search($criteria, $context)->getEntities();
     }
 
     public function getAvailableProducts(EntityRepository $entityRepository, array $productNumbers, Context $context): ProductCollection
