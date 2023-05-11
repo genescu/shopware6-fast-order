@@ -6,9 +6,12 @@ namespace GE\FastOrder\Storefront\Controller;
 
 use GE\FastOrder\Service\FastOrderService;
 use Shopware\Core\Checkout\Cart\Cart;
+use Shopware\Core\Content\Product\ProductCollection;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Routing\Exception\MissingRequestParameterException;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Storefront\Controller\StorefrontController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,9 +31,58 @@ class FastOrderController extends StorefrontController
     /**
      * @Route("/fast-order", name="frontend.fast-order.page", methods={"GET"})
      */
-    public function renderFastOrder(): Response
+    public function renderFastOrder(SalesChannelContext $salesContext): Response
     {
-        return $this->renderStorefront('@GEfastOrder/storefront/page/fast-order.html.twig');
+        return $this->renderStorefront('@GEfastOrder/storefront/page/fast-order.html.twig',
+            ['currency' => $salesContext->getCurrency()->getSymbol()]
+        );
+    }
+
+    /**
+     * @Route("/fast-order/suggest/{search}", name="frontend.fast-order.suggest", methods={"GET"}, defaults={"XmlHttpRequest"=true}))
+     *
+     * @return JsonResponse
+     */
+    public function getSuggestion(Request $request, Cart $cart, Context $context, SalesChannelContext $salesContext): Response
+    {
+        $search = trim($request->get('search'));
+
+        if (!$search) {
+            throw new MissingRequestParameterException('search');
+        }
+
+        $activeProductsRepository = $this->container->get('product.repository');
+        $search = $request->attributes->getAlnum('search');
+        $activeProducts = $this->fastOrderService->searchAvailableProducts(
+            $activeProductsRepository,
+            $search,
+            $context
+        );
+
+        $products = $this->prepareSuggestionResults($activeProducts, $salesContext);
+
+        return $this->renderStorefront('@Storefront/storefront/page/component/fast-order-items.html.twig',
+            ['products' => $products]);
+    }
+
+    protected function prepareSuggestionResults(ProductCollection $products, SalesChannelContext $salesContext): array
+    {
+        $collection = [];
+
+        if (empty($products)) {
+            return $collection;
+        }
+
+        foreach ($products as $product) {
+            $price = $product->getPrice()->getCurrencyPrice($salesContext->getCurrency()->getId());
+            $collection[] =
+                ['productNumber' => $product->getProductNumber(),
+                    'stock' => $product->getStock(),
+                    'price' => $price->getGross(),
+                ];
+        }
+
+        return $collection;
     }
 
     /**
@@ -58,7 +110,9 @@ class FastOrderController extends StorefrontController
     protected function getItemsShoppingCart(Request $request): array
     {
         $products = $request->get('products');
-
+        if (empty($products)) {
+            return [];
+        }
         return array_filter(array_combine(
             array_map('trim', array_column($products, 'number')),
             array_map('intval', array_column($products, 'quantity')),

@@ -1,0 +1,27 @@
+{% block fast_order_response %}
+    <div id="fastorder-respone" class="search-suggest" style="z-index: 1000;
+box-shadow: 0 10px 25px -15px #000; position: relative">
+        <ul class="search-suggest-product js-result" style="margin: 0;list-style: none;
+border: 1px solid #bcc1c7; padding: 1rem;   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+">
+            {% for product in products %}
+                <li style="
+background: #fff;
+border-bottom: 1px solid #bcc1c7; width: 100%; padding-left: 1rem; padding-right: 1rem;">
+                    <a href="#/" class="search-suggest-product-link fast-order-link" data-id="{{ product.productNumber }}" data-price="{{ product.price }}">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col search-suggest-product-name">{{ product.productNumber }}</div>
+                            <div class="col-auto search-suggest-product-price">
+                                <span class="search-suggest-product-price">{{ product.price }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

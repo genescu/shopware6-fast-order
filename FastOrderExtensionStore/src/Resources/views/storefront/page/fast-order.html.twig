@@ -1,53 +1,65 @@
 {% sw_extends '@Storefront/storefront/base.html.twig' %}
-
-
-
-
 {% block base_content %}
     <h1 class="cart-main-header">
         Fast Order Shopping cart
     </h1>
+
     <form action="{{ path('frontend.fast-order.add-cart') }}" method="post">
         {{ sw_csrf('frontend.fast-order.add-cart') }}
+        {% block data_fastorder %}
+            <div data-fastorder="true">
+                <div class="form-row font-weight-bold">
+                    <div class="col col-6">
+                        Article
+                        <hr>
+                    </div>
+                    <div class="col col-3 ml-4">
+                        Quantity
+                        <hr>
+                    </div>
+                </div>
+                <div id="fast-order">
+                    {% for i in 1..10 %}
+                        <div class="form-row mb-3" data-type="fast-order-row">
+                            <div class="col col-6">
+                                <input placeholder="Search article..." autocomplete="off"
+                                       type="text" class="form-control fast-order-input"
+                                       maxlength="64"
+                                       data-id="products_{{ i }}"
+                                       name="products[{{ i }}][number]">
+                                <div class="fastorder-autocomplete"></div>
 
-        <div class="form-row font-weight-bold">
-            <div class="col col-6">
-                Article
-                <hr>
-            </div>
-            <div class="col col-3 ml-4">
-                Quantity
-                <hr>
-            </div>
-        </div>
+                            </div>
 
-        {% for i in 1..10 %}
-            <div class="form-row mb-3">
-                <div class="col col-6">
-                    <input placeholder="Search article..."
-                           type="text" class="form-control" id="product"
-                           maxlength="64"
-                           name="products[{{ i }}][number]">
+                            <div class="col col-3 ml-4">
+                                <input placeholder="Quantity" type="text" class="form-control fastorder-quantity"
+                                       autocomplete="off"
+                                       maxlength="10"
+                                       data-id="quantity_{{ i }}"
+                                       name="products[{{ i }}][quantity]">
+                            </div>
+                        </div>
+                    {% endfor %}
 
+                    <div class="form-row mb-3">
+                        <div class="col col-9 text-right ml-4">
+                            Total amount:
+                            <span class="font-weight-bold">
+                               <span id="fast-order-currency"> {{ currency }} </span>
+                                <span id="fast-order-total-amount">0.00</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-row mb-3">
+                        <input type="submit" class="btn-primary mt-3 p-2 pl-3 pr-3" value="Add to shopping cart">
+                    </div>
                 </div>
 
-                <div class="col col-3 ml-4">
-                    <input placeholder="Quantity" type="text" class="form-control" id="quantity"
-                           name="products[{{ i }}][quantity]">
-                </div>
-
             </div>
+        {% endblock %}
 
-        {% endfor %}
-        <div class="form-row mb-3">
-            <div class="col col-9 text-right ml-4">
-                Total amount: <span class="font-weight-bold" id="total-amount">-</span>
-            </div>
-        </div>
-        <div class="form-row mb-3">
-            <input type="submit" class="btn-primary mt-3 p-2 pl-3 pr-3" value="Add to shopping cart">
-        </div>
     </form>
+
 
 {% endblock %}
 
