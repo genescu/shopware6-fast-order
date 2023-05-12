@@ -120,8 +120,6 @@ export default class FastorderPlugin extends Plugin {
 
         }
 
-        console.log(total);
-
         this.node.querySelector("#fast-order-total-amount").innerHTML = total.toFixed(2);
 
     }
