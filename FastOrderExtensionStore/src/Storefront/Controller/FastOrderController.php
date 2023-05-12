@@ -33,7 +33,8 @@ class FastOrderController extends StorefrontController
      */
     public function renderFastOrder(SalesChannelContext $salesContext): Response
     {
-        return $this->renderStorefront('@GEfastOrder/storefront/page/fast-order.html.twig',
+        return $this->renderStorefront(
+            '@GEfastOrder/storefront/page/fast-order.html.twig',
             ['currency' => $salesContext->getCurrency()->getSymbol()]
         );
     }
@@ -45,14 +46,13 @@ class FastOrderController extends StorefrontController
      */
     public function getSuggestion(Request $request, Cart $cart, Context $context, SalesChannelContext $salesContext): Response
     {
-        $search = trim($request->get('search'));
+        $search = $request->attributes->getAlnum('search');
 
         if (!$search) {
             throw new MissingRequestParameterException('search');
         }
 
         $activeProductsRepository = $this->container->get('product.repository');
-        $search = $request->attributes->getAlnum('search');
         $activeProducts = $this->fastOrderService->searchAvailableProducts(
             $activeProductsRepository,
             $search,
@@ -61,8 +61,10 @@ class FastOrderController extends StorefrontController
 
         $products = $this->prepareSuggestionResults($activeProducts, $salesContext);
 
-        return $this->renderStorefront('@Storefront/storefront/page/component/fast-order-items.html.twig',
-            ['products' => $products]);
+        return $this->renderStorefront(
+            '@Storefront/storefront/page/component/fast-order-items.html.twig',
+            ['products' => $products]
+        );
     }
 
     protected function prepareSuggestionResults(ProductCollection $products, SalesChannelContext $salesContext): array
