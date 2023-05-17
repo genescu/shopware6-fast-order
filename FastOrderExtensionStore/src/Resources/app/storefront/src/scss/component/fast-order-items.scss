@@ -1,12 +1,12 @@
 #fastorder-response {
   z-index: 1000;
-  box-shadow: 0 10px 25px -15px #000;
+  box-shadow: 0 10px 25px -15px $black;
   position: relative;
 
   ul {
     margin: 0;
     list-style: none;
-    border: $input-border-width solid $input-group-addon-border-color;
+    border: $input-border-width solid #bcc1c7;
     padding: 1rem;
     position: absolute;
     top: 0;
@@ -16,10 +16,14 @@
 
     li {
       background: #fff;
-      border-bottom: 1 $input-border-width solid $input-group-addon-border-color;
+      border-bottom: $input-border-width solid #bcc1c7;
       width: 100%;
       padding-left: 1rem;
       padding-right: 1rem;
+    }
+
+    li:last-child {
+      border-bottom: none;
     }
   }
 }

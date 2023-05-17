@@ -92,19 +92,21 @@ class FastOrderController extends StorefrontController
      */
     public function sendProductsToCart(Request $request, Cart $cart, Context $context, SalesChannelContext $salesContext): Response
     {
-        $activeProductsRepository = $this->container->get('product.repository');
+        $productEntityRepository = $this->container->get('product.repository');
+        $fastOrderEntityRepository = $this->container->get('fast_order.repository');
 
         $itemsShoppingCart = $this->getItemsShoppingCart($request);
 
         $activeProducts = $this->fastOrderService->getAvailableProducts(
-            $activeProductsRepository,
+            $productEntityRepository,
             array_keys($itemsShoppingCart),
             $context
         );
 
-        $lineItems = $this->fastOrderService->prepareLineItems($activeProducts, $itemsShoppingCart, $salesContext);
+        $lineItem = $this->fastOrderService->prepareLineItems($activeProducts, $itemsShoppingCart, $salesContext);
+        $this->fastOrderService->addToCart($cart, $lineItem, $salesContext);
+        $this->fastOrderService->storeLineItems($fastOrderEntityRepository, $activeProducts, $itemsShoppingCart, $salesContext, $context);
 
-        $this->fastOrderService->addToCart($cart, $lineItems, $salesContext);
 
         return $this->redirectToRoute('frontend.checkout.cart.page');
     }
