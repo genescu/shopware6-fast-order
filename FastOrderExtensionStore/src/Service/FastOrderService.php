@@ -9,6 +9,7 @@ use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\Content\Product\ProductCollection;
+use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -47,8 +48,11 @@ class FastOrderService
         return $entityRepository->search($criteria, $context)->getEntities();
     }
 
-    public function prepareLineItems(ProductCollection $productCollection, array $productQuantityMap, SalesChannelContext $salesContext): array
-    {
+    public function prepareLineItems(
+        ProductCollection $productCollection,
+        array $productQuantityMap,
+        SalesChannelContext $salesContext
+    ): array {
         $lineItem = [];
         foreach ($productCollection as $product) {
             $lineItem[] = $this->lineItemFactoryRegistry->create([
@@ -59,6 +63,24 @@ class FastOrderService
             ], $salesContext);
         }
         return $lineItem;
+    }
+
+    public function storeLineItems(
+        EntityRepository $entityRepository,
+        ProductCollection $productCollection,
+        array $productQuantityMap,
+        SalesChannelContext $salesContext,
+        Context $context
+    ): void {
+        foreach ($productCollection as $product) {
+            $fastOrderItem = [
+                'product_number' => $product->getProductNumber(),
+                'quantity' => $productQuantityMap[$product->getProductNumber()],
+                'version_id' => $salesContext->getToken(),
+                'created_at' => $salesContext->getCurrentCustomerGroup()->getCreatedAt()->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+            ];
+            $entityRepository->create([$fastOrderItem], $context);
+        }
     }
 
     public function addToCart(Cart $cart, array $itemsCollection, SalesChannelContext $salesChannelContext): void

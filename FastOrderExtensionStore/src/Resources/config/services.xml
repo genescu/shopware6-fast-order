@@ -6,6 +6,7 @@
 
     <services>
 
+        <!--controllers-->
         <service id="GE\FastOrder\Storefront\Controller\FastOrderController" public="true">
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
@@ -13,9 +14,15 @@
             <argument type="service" id="GE\FastOrder\Service\FastOrderService"/>
         </service>
 
+        <!--services-->
         <service id="GE\FastOrder\Service\FastOrderService" public="true">
             <argument type="service" id="Shopware\Core\Checkout\Cart\LineItemFactoryRegistry"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
+        </service>
+
+        <!--entities-->
+        <service id="GE\FastOrder\Entity\FastOrderDefinition" public="true">
+            <tag name="shopware.entity.definition" entity="fast_order"/>
         </service>
 
     </services>
