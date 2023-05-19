@@ -35,7 +35,10 @@ class FastOrderController extends StorefrontController
     {
         return $this->renderStorefront(
             '@GEfastOrder/storefront/page/fast-order.html.twig',
-            ['currency' => $salesContext->getCurrency()->getSymbol()]
+            [
+                'currency' => $salesContext->getCurrency()
+                    ->getSymbol(),
+            ]
         );
     }
 
@@ -44,11 +47,15 @@ class FastOrderController extends StorefrontController
      *
      * @return JsonResponse
      */
-    public function getSuggestion(Request $request, Cart $cart, Context $context, SalesChannelContext $salesContext): Response
-    {
+    public function getSuggestion(
+        Request $request,
+        Cart $cart,
+        Context $context,
+        SalesChannelContext $salesContext
+    ): Response {
         $search = $request->attributes->getAlnum('search');
 
-        if (!$search) {
+        if (! $search) {
             throw new MissingRequestParameterException('search');
         }
 
@@ -63,35 +70,21 @@ class FastOrderController extends StorefrontController
 
         return $this->renderStorefront(
             '@Storefront/storefront/page/component/fast-order-items.html.twig',
-            ['products' => $products]
+            [
+                'products' => $products,
+            ]
         );
-    }
-
-    protected function prepareSuggestionResults(ProductCollection $products, SalesChannelContext $salesContext): array
-    {
-        $collection = [];
-
-        if (empty($products)) {
-            return $collection;
-        }
-
-        foreach ($products as $product) {
-            $price = $product->getPrice()->getCurrencyPrice($salesContext->getCurrency()->getId());
-            $collection[] =
-                ['productNumber' => $product->getProductNumber(),
-                    'stock' => $product->getStock(),
-                    'price' => $price->getGross(),
-                ];
-        }
-
-        return $collection;
     }
 
     /**
      * @Route("/fast-order/add-cart", name="frontend.fast-order.add-cart", methods={"POST"})
      */
-    public function sendProductsToCart(Request $request, Cart $cart, Context $context, SalesChannelContext $salesContext): Response
-    {
+    public function sendProductsToCart(
+        Request $request,
+        Cart $cart,
+        Context $context,
+        SalesChannelContext $salesContext
+    ): Response {
         $productEntityRepository = $this->container->get('product.repository');
         $fastOrderEntityRepository = $this->container->get('fast_order.repository');
 
@@ -105,10 +98,37 @@ class FastOrderController extends StorefrontController
 
         $lineItem = $this->fastOrderService->prepareLineItems($activeProducts, $itemsShoppingCart, $salesContext);
         $this->fastOrderService->addToCart($cart, $lineItem, $salesContext);
-        $this->fastOrderService->storeLineItems($fastOrderEntityRepository, $activeProducts, $itemsShoppingCart, $salesContext, $context);
-
+        $this->fastOrderService->storeLineItems(
+            $fastOrderEntityRepository,
+            $activeProducts,
+            $itemsShoppingCart,
+            $salesContext,
+            $context
+        );
 
         return $this->redirectToRoute('frontend.checkout.cart.page');
+    }
+
+    protected function prepareSuggestionResults(ProductCollection $products, SalesChannelContext $salesContext): array
+    {
+        $collection = [];
+
+        if (empty($products)) {
+            return $collection;
+        }
+
+        foreach ($products as $product) {
+            $price = $product->getPrice()
+                ->getCurrencyPrice($salesContext->getCurrency()->getId());
+            $collection[] =
+                [
+                    'productNumber' => $product->getProductNumber(),
+                    'stock' => $product->getStock(),
+                    'price' => $price->getGross(),
+                ];
+        }
+
+        return $collection;
     }
 
     protected function getItemsShoppingCart(Request $request): array

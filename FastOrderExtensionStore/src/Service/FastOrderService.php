@@ -21,6 +21,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 class FastOrderService
 {
     protected LineItemFactoryRegistry $lineItemFactoryRegistry;
+
     protected CartService $cartService;
 
     public function __construct(LineItemFactoryRegistry $lineItemFactoryRegistry, CartService $cartService)
@@ -29,23 +30,31 @@ class FastOrderService
         $this->cartService = $cartService;
     }
 
-    public function searchAvailableProducts(EntityRepository $entityRepository, string $search, Context $context): ProductCollection
-    {
+    public function searchAvailableProducts(
+        EntityRepository $entityRepository,
+        string $search,
+        Context $context
+    ): ProductCollection {
         $criteria = (new Criteria())
             ->addFilter(new EqualsFilter('active', true))
             ->addFilter(new ContainsFilter('productNumber', $search))
             ->setLimit(5);
 
-        return $entityRepository->search($criteria, $context)->getEntities();
+        return $entityRepository->search($criteria, $context)
+            ->getEntities();
     }
 
-    public function getAvailableProducts(EntityRepository $entityRepository, array $productNumbers, Context $context): ProductCollection
-    {
+    public function getAvailableProducts(
+        EntityRepository $entityRepository,
+        array $productNumbers,
+        Context $context
+    ): ProductCollection {
         $criteria = (new Criteria())
             ->addFilter(new EqualsFilter('active', true))
             ->addFilter(new EqualsAnyFilter('productNumber', $productNumbers));
 
-        return $entityRepository->search($criteria, $context)->getEntities();
+        return $entityRepository->search($criteria, $context)
+            ->getEntities();
     }
 
     public function prepareLineItems(
@@ -77,7 +86,9 @@ class FastOrderService
                 'product_number' => $product->getProductNumber(),
                 'quantity' => $productQuantityMap[$product->getProductNumber()],
                 'version_id' => $salesContext->getToken(),
-                'created_at' => $salesContext->getCurrentCustomerGroup()->getCreatedAt()->format(Defaults::STORAGE_DATE_TIME_FORMAT),
+                'created_at' => $salesContext->getCurrentCustomerGroup()
+                    ->getCreatedAt()
+                    ->format(Defaults::STORAGE_DATE_TIME_FORMAT),
             ];
             $entityRepository->create([$fastOrderItem], $context);
         }
