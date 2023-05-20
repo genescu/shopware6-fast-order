@@ -1,9 +1,9 @@
 import HttpClient from 'src/service/http-client.service'
 import Plugin from 'src/plugin-system/plugin.class'
 
-export default class FastorderStorefront extends Plugin {
+export default class Index extends Plugin {
   init () {
-    console.log('Fastorder init')
+    console.log('fastorder plugin init')
 
     // initialize the HttpClient
     this._client = new HttpClient()
