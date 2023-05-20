@@ -1,0 +1,13 @@
+{% block sw_dashboard_index_content_statistics_sum %}
+    {% parent() %}
+    <div class="sw-card-view sw-dashboard-index__content">
+        <template v-if="!isLoading">
+            <div class="sw-dashboard-index__card-headline">
+            <h1>Fast Order Products</h1>
+            </div>
+            <div class="sw-card__content">
+                <sw-data-grid :data-source="dataSource" :columns="columns"></sw-data-grid>
+            </div>
+        </template>
+    </div>
+{% endblock %}

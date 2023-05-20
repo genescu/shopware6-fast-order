@@ -2,7 +2,7 @@
 
 ##### FastOrder Plugin for Shopware 6
 
-In order to install use this commands:
+In order to install, use this commands:
 
 `php bin/console plugin:refresh
 `

@@ -1,1 +1,1 @@
-import './module/fastorder/fastorder.administration'
+import './module/fastorder/index'
