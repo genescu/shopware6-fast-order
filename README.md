@@ -9,13 +9,13 @@ The Shopware6 FastOrderPlugin is a plugin that allows for faster ordering. To in
 **Description**
 
 
-The Fast Order Plugin is a Shop ware plugin that allows customers to quickly and easily place an order for a product using its product number and desired quantity.
+The Fast Order Plugin is a Shopware plugin that allows customers to quickly and easily place an order for a product using its product number and desired quantity.
 
-This plugin utilizes Doctrine DB AL to create a database table called` fast_order` with fields including` id`,` product_number`,` quantity`,` version_id`,` created_at`, and` updated_at`. The` id` field serves as the primary key for this table.
+This plugin utilizes Doctrine DBAL to create a database table called` fast_order` with fields including` id`,` product_number`,` quantity`,` version_id`,` created_at`, and` updated_at`. The` id` field serves as the primary key for this table.
 
 Upon installing the plugin, the` fast_order` table will be created if it does not already exist in the database.
 
-In case the plugin is un installed, by default all data related to the plugin will be deleted from the database. However, if the` keep UserData` function is enabled, the data will remain intact in the database.
+In case the plugin is uninstalled, by default all data related to the plugin will be deleted from the database. However, if the` keep UserData` function is enabled, the data will remain intact in the database.
 
 
 
